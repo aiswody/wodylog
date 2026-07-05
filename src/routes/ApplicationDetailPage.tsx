@@ -2,10 +2,13 @@ import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useApplication } from '../hooks/useApplication'
 import { useEvents } from '../hooks/useEvents'
+import { useApplicationResumes } from '../hooks/useApplicationResumes'
+import { useResumeVersions } from '../hooks/useResumeVersions'
 import { EventTimeline } from '../components/events/EventTimeline'
 import { EventFormModal } from '../components/events/EventFormModal'
 import type { EventFormValues } from '../components/events/EventFormModal'
 import { ApplicationForm } from '../components/applications/ApplicationForm'
+import { ResumeUsageList } from '../components/resumes/ResumeUsageList'
 import { Modal } from '../components/common/Modal'
 import { StatusBadge } from '../components/common/StatusBadge'
 import { PlatformBadge } from '../components/common/PlatformBadge'
@@ -26,8 +29,12 @@ export function ApplicationDetailPage() {
     deleteEvent,
   } = useEvents(applicationId)
 
+  const { linkedVersions, linkVersion, unlinkVersion } = useApplicationResumes(applicationId)
+  const { versions: allVersions } = useResumeVersions()
+
   const [showEditApplication, setShowEditApplication] = useState(false)
   const [eventModalTarget, setEventModalTarget] = useState<Event | 'new' | null>(null)
+  const [selectedVersionId, setSelectedVersionId] = useState('')
 
   if (appLoading) return <LoadingSpinner />
   if (!application) return <ErrorBanner message={appError ?? '지원 정보를 찾을 수 없어요.'} />
@@ -44,6 +51,8 @@ export function ApplicationDetailPage() {
     }
     return createEvent({ ...values, event_date: isoDate })
   }
+
+  const unlinkedVersions = allVersions.filter((v) => !linkedVersions.some((lv) => lv.id === v.id))
 
   return (
     <div>
@@ -89,6 +98,45 @@ export function ApplicationDetailPage() {
           onClose={() => setEventModalTarget(null)}
           onSubmit={handleEventSubmit}
         />
+      )}
+
+      <div className="page-header">
+        <h2>연결된 자소서 버전</h2>
+      </div>
+      <ResumeUsageList
+        items={linkedVersions.map((v) => ({ id: v.id, label: v.version_name }))}
+        emptyText="아직 연결된 자소서 버전이 없어요."
+      />
+      {linkedVersions.length > 0 && (
+        <div className="resume-link-row">
+          {linkedVersions.map((v) => (
+            <button key={v.id} type="button" onClick={() => void unlinkVersion(v.id)}>
+              {v.version_name} 연결 해제
+            </button>
+          ))}
+        </div>
+      )}
+      {unlinkedVersions.length > 0 && (
+        <div className="resume-link-row">
+          <select value={selectedVersionId} onChange={(e) => setSelectedVersionId(e.target.value)}>
+            <option value="">자소서 버전 선택</option>
+            {unlinkedVersions.map((v) => (
+              <option key={v.id} value={v.id}>
+                {v.version_name}
+              </option>
+            ))}
+          </select>
+          <button
+            type="button"
+            disabled={!selectedVersionId}
+            onClick={() => {
+              if (!selectedVersionId) return
+              void linkVersion(selectedVersionId).then(() => setSelectedVersionId(''))
+            }}
+          >
+            연결
+          </button>
+        </div>
       )}
 
       {showEditApplication && (
