@@ -1,0 +1,124 @@
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 12px 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.app-title {
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.app-nav {
+  display: flex;
+  gap: 16px;
+  flex-grow: 1;
+}
+
+.app-nav a {
+  color: var(--text);
+  text-decoration: none;
+  padding: 4px 0;
+}
+
+.app-nav a.active {
+  color: var(--text-h);
+  border-bottom: 2px solid var(--accent);
+}
+
+.app-content {
+  flex-grow: 1;
+  padding: 24px;
+  max-width: 1024px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.login-page {
+  max-width: 360px;
+  margin: 80px auto 0;
+  text-align: center;
+}
+
+.login-subtitle {
+  margin-bottom: 24px;
+}
+
+.login-mode-toggle {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.login-mode-toggle button {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  background: none;
+  color: var(--text);
+}
+
+.login-mode-toggle button.active {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: left;
+}
+
+.login-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+}
+
+.login-form input {
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text-h);
+}
+
+.login-form button[type='submit'] {
+  margin-top: 8px;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  background: var(--accent);
+  color: white;
+}
+
+.login-form button[type='submit']:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.loading-spinner {
+  padding: 24px;
+  text-align: center;
+  color: var(--text);
+}
+
+.error-banner {
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: var(--danger-bg);
+  color: var(--danger);
+  font-size: 14px;
+}
