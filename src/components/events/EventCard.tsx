@@ -1,16 +1,18 @@
 import { format } from 'date-fns'
 import { ko } from 'date-fns/locale'
+import type { ReactNode } from 'react'
 import { DdayPill } from '../common/DdayPill'
 import type { Event } from '../../types/database'
 
-interface EventCardProps {
-  event: Event
-  onToggleComplete: (event: Event) => void
-  onEdit: (event: Event) => void
-  onDelete: (event: Event) => void
+interface EventCardProps<T extends Event> {
+  event: T
+  meta?: ReactNode
+  onToggleComplete: (event: T) => void
+  onEdit: (event: T) => void
+  onDelete: (event: T) => void
 }
 
-export function EventCard({ event, onToggleComplete, onEdit, onDelete }: EventCardProps) {
+export function EventCard<T extends Event>({ event, meta, onToggleComplete, onEdit, onDelete }: EventCardProps<T>) {
   return (
     <div className={`event-card${event.is_completed ? ' completed' : ''}`}>
       <input
@@ -20,6 +22,7 @@ export function EventCard({ event, onToggleComplete, onEdit, onDelete }: EventCa
         aria-label="완료 여부"
       />
       <div className="event-card-body">
+        {meta && <div className="event-card-source">{meta}</div>}
         <div className="event-card-header">
           <strong>{event.event_type}</strong>
           <DdayPill date={event.event_date} isCompleted={event.is_completed} />
