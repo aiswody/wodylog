@@ -21,29 +21,21 @@ export function PushReminderPanel() {
   }
 
   return (
-    <section className="detail-section google-sync-panel">
-      <div className="page-header">
-        <div>
-          <h2>리마인더 알림</h2>
-          {!subscribed && (
-            <p className="google-sync-description">마감·면접 하루 전에 브라우저 알림을 받아요. 앱을 열어두지 않아도 와요.</p>
-          )}
-          {subscribed && <p className="google-sync-description">알림이 켜져 있어요.</p>}
-        </div>
-        {!subscribed ? (
-          <button type="button" onClick={() => void handleSubscribe()} disabled={subscribing}>
-            {subscribing ? '설정 중...' : '알림 받기'}
-          </button>
-        ) : (
-          <div className="google-sync-actions">
-            <button type="button" onClick={() => void handleUnsubscribe()}>
-              알림 해제
-            </button>
-          </div>
-        )}
-      </div>
+    <div className="push-reminder-banner">
+      <span className="push-reminder-text">
+        {subscribed ? '🔔 리마인더 알림이 켜져 있어요.' : '🔔 마감·면접 하루 전에 알림을 받아보세요.'}
+      </span>
+      {!subscribed ? (
+        <button type="button" className="push-reminder-btn" onClick={() => void handleSubscribe()} disabled={subscribing}>
+          {subscribing ? '설정 중...' : '알림 받기'}
+        </button>
+      ) : (
+        <button type="button" className="push-reminder-btn" onClick={() => void handleUnsubscribe()}>
+          알림 해제
+        </button>
+      )}
 
       {error && <ErrorBanner message={error} />}
-    </section>
+    </div>
   )
 }
