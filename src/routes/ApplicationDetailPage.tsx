@@ -71,73 +71,77 @@ export function ApplicationDetailPage() {
 
       {application.memo && <p className="application-memo">{application.memo}</p>}
 
-      <div className="page-header">
-        <h2>일정</h2>
-        <button type="button" onClick={() => setEventModalTarget('new')}>
-          + 일정 추가
-        </button>
-      </div>
-
-      {eventsError && <ErrorBanner message={eventsError} />}
-      {eventsLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <EventTimeline
-          events={events}
-          onToggleComplete={(event) => void updateEvent(event.id, { is_completed: !event.is_completed })}
-          onEdit={(event) => setEventModalTarget(event)}
-          onDelete={(event) => {
-            if (confirm('이 일정을 삭제할까요?')) void deleteEvent(event.id)
-          }}
-        />
-      )}
-
-      {eventModalTarget && (
-        <EventFormModal
-          initial={eventModalTarget === 'new' ? undefined : eventModalTarget}
-          onClose={() => setEventModalTarget(null)}
-          onSubmit={handleEventSubmit}
-        />
-      )}
-
-      <div className="page-header">
-        <h2>연결된 자소서 버전</h2>
-      </div>
-      <ResumeUsageList
-        items={linkedVersions.map((v) => ({ id: v.id, label: v.version_name }))}
-        emptyText="아직 연결된 자소서 버전이 없어요."
-      />
-      {linkedVersions.length > 0 && (
-        <div className="resume-link-row">
-          {linkedVersions.map((v) => (
-            <button key={v.id} type="button" onClick={() => void unlinkVersion(v.id)}>
-              {v.version_name} 연결 해제
-            </button>
-          ))}
-        </div>
-      )}
-      {unlinkedVersions.length > 0 && (
-        <div className="resume-link-row">
-          <select value={selectedVersionId} onChange={(e) => setSelectedVersionId(e.target.value)}>
-            <option value="">자소서 버전 선택</option>
-            {unlinkedVersions.map((v) => (
-              <option key={v.id} value={v.id}>
-                {v.version_name}
-              </option>
-            ))}
-          </select>
-          <button
-            type="button"
-            disabled={!selectedVersionId}
-            onClick={() => {
-              if (!selectedVersionId) return
-              void linkVersion(selectedVersionId).then(() => setSelectedVersionId(''))
-            }}
-          >
-            연결
+      <section className="detail-section">
+        <div className="page-header">
+          <h2>일정</h2>
+          <button type="button" onClick={() => setEventModalTarget('new')}>
+            + 일정 추가
           </button>
         </div>
-      )}
+
+        {eventsError && <ErrorBanner message={eventsError} />}
+        {eventsLoading ? (
+          <LoadingSpinner />
+        ) : (
+          <EventTimeline
+            events={events}
+            onToggleComplete={(event) => void updateEvent(event.id, { is_completed: !event.is_completed })}
+            onEdit={(event) => setEventModalTarget(event)}
+            onDelete={(event) => {
+              if (confirm('이 일정을 삭제할까요?')) void deleteEvent(event.id)
+            }}
+          />
+        )}
+
+        {eventModalTarget && (
+          <EventFormModal
+            initial={eventModalTarget === 'new' ? undefined : eventModalTarget}
+            onClose={() => setEventModalTarget(null)}
+            onSubmit={handleEventSubmit}
+          />
+        )}
+      </section>
+
+      <section className="detail-section">
+        <div className="page-header">
+          <h2>연결된 자소서 버전</h2>
+        </div>
+        <ResumeUsageList
+          items={linkedVersions.map((v) => ({ id: v.id, label: v.version_name }))}
+          emptyText="아직 연결된 자소서 버전이 없어요."
+        />
+        {linkedVersions.length > 0 && (
+          <div className="resume-link-row">
+            {linkedVersions.map((v) => (
+              <button key={v.id} type="button" onClick={() => void unlinkVersion(v.id)}>
+                {v.version_name} 연결 해제
+              </button>
+            ))}
+          </div>
+        )}
+        {unlinkedVersions.length > 0 && (
+          <div className="resume-link-row">
+            <select value={selectedVersionId} onChange={(e) => setSelectedVersionId(e.target.value)}>
+              <option value="">자소서 버전 선택</option>
+              {unlinkedVersions.map((v) => (
+                <option key={v.id} value={v.id}>
+                  {v.version_name}
+                </option>
+              ))}
+            </select>
+            <button
+              type="button"
+              disabled={!selectedVersionId}
+              onClick={() => {
+                if (!selectedVersionId) return
+                void linkVersion(selectedVersionId).then(() => setSelectedVersionId(''))
+              }}
+            >
+              연결
+            </button>
+          </div>
+        )}
+      </section>
 
       {showEditApplication && (
         <Modal onClose={() => setShowEditApplication(false)}>

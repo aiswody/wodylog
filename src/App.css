@@ -415,6 +415,23 @@
   color: var(--text-h);
 }
 
+.detail-section {
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: 20px 22px;
+  margin-bottom: 20px;
+}
+
+.detail-section .page-header {
+  margin-bottom: 16px;
+}
+
+.detail-section .resume-link-row:last-child {
+  margin-bottom: 0;
+}
+
 .application-memo {
   white-space: pre-wrap;
   color: var(--text-h);
