@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { PLATFORM_OPTIONS, STATUS_OPTIONS } from '../../lib/constants'
-import type { Application } from '../../types/database'
+import type { Application, ResumeVersion } from '../../types/database'
 import { ErrorBanner } from '../common/ErrorBanner'
 
 export interface ApplicationFormValues {
@@ -11,6 +11,7 @@ export interface ApplicationFormValues {
   status: string
   applied_date: string
   memo: string
+  resume_version_id: string
 }
 
 interface ApplicationFormProps {
@@ -18,9 +19,10 @@ interface ApplicationFormProps {
   submitLabel: string
   onSubmit: (values: ApplicationFormValues) => Promise<{ error: string | null }>
   onCancel?: () => void
+  resumeVersions?: ResumeVersion[]
 }
 
-export function ApplicationForm({ initial, submitLabel, onSubmit, onCancel }: ApplicationFormProps) {
+export function ApplicationForm({ initial, submitLabel, onSubmit, onCancel, resumeVersions }: ApplicationFormProps) {
   const [values, setValues] = useState<ApplicationFormValues>({
     company_name: initial?.company_name ?? '',
     position: initial?.position ?? '',
@@ -28,6 +30,7 @@ export function ApplicationForm({ initial, submitLabel, onSubmit, onCancel }: Ap
     status: initial?.status ?? STATUS_OPTIONS[0],
     applied_date: initial?.applied_date ?? '',
     memo: initial?.memo ?? '',
+    resume_version_id: '',
   })
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
@@ -87,6 +90,22 @@ export function ApplicationForm({ initial, submitLabel, onSubmit, onCancel }: Ap
         메모
         <textarea rows={3} value={values.memo} onChange={(e) => setValues((v) => ({ ...v, memo: e.target.value }))} />
       </label>
+      {resumeVersions && (
+        <label>
+          자소서 버전
+          <select
+            value={values.resume_version_id}
+            onChange={(e) => setValues((v) => ({ ...v, resume_version_id: e.target.value }))}
+          >
+            <option value="">나중에 연결</option>
+            {resumeVersions.map((rv) => (
+              <option key={rv.id} value={rv.id}>
+                {rv.version_name}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
 
       {error && <ErrorBanner message={error} />}
 

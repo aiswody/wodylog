@@ -28,7 +28,7 @@ export function useApplications() {
   }, [fetchApplications])
 
   async function createApplication(values: ApplicationFormValues) {
-    if (!user) return { error: '로그인이 필요합니다.' }
+    if (!user) return { error: '로그인이 필요합니다.', applicationId: null }
     const { data, error } = await supabase
       .from('applications')
       .insert({
@@ -42,9 +42,9 @@ export function useApplications() {
       })
       .select()
       .single()
-    if (error) return { error: error.message }
+    if (error) return { error: error.message, applicationId: null }
     setApplications((prev) => [data, ...prev])
-    return { error: null }
+    return { error: null, applicationId: data.id as string }
   }
 
   async function updateApplication(id: string, patch: Partial<Application>) {

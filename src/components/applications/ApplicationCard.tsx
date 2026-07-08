@@ -3,7 +3,12 @@ import { StatusBadge } from '../common/StatusBadge'
 import { PlatformBadge } from '../common/PlatformBadge'
 import type { Application } from '../../types/database'
 
-export function ApplicationCard({ application }: { application: Application }) {
+interface ApplicationCardProps {
+  application: Application
+  resumeVersionNames?: string[]
+}
+
+export function ApplicationCard({ application, resumeVersionNames }: ApplicationCardProps) {
   return (
     <Link to={`/applications/${application.id}`} className="application-card">
       <div className="application-card-header">
@@ -15,6 +20,15 @@ export function ApplicationCard({ application }: { application: Application }) {
         <PlatformBadge platform={application.platform} />
         {application.applied_date && <span>지원일 {application.applied_date}</span>}
       </div>
+      {resumeVersionNames && resumeVersionNames.length > 0 && (
+        <div className="application-card-resumes">
+          {resumeVersionNames.map((name) => (
+            <span key={name} className="badge badge-neutral">
+              📎 {name}
+            </span>
+          ))}
+        </div>
+      )}
     </Link>
   )
 }
