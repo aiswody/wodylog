@@ -65,10 +65,11 @@ export function ResumeVersionsPage() {
             submitLabel="저장"
             onCancel={() => setEditingVersion(null)}
             onSubmit={async (values) => {
-              const result = await updateVersion(editingVersion.id, {
-                version_name: values.version_name,
-                content: values.content || null,
-              })
+              const result = await updateVersion(
+                editingVersion.id,
+                { version_name: values.version_name, content: values.content || null },
+                values.file,
+              )
               if (!result.error) setEditingVersion(null)
               return result
             }}

@@ -22,3 +22,7 @@ export const EVENT_TYPE_OPTIONS = [
 // same-date events highlight the day; events landing within this many
 // hours of each other get a tighter "urgent" badge.
 export const COLLISION_URGENT_HOURS = 3
+
+export const RESUME_FILE_BUCKET = 'resumes'
+export const RESUME_FILE_ACCEPT =
+  '.pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document'

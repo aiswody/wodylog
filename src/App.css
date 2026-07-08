@@ -640,3 +640,13 @@
   color: var(--text);
   font-size: 13px;
 }
+
+.resume-file-link {
+  font-size: 13px;
+  margin: 8px 0;
+}
+
+.resume-existing-file {
+  font-size: 12px;
+  color: var(--text);
+}

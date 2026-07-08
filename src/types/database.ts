@@ -26,6 +26,8 @@ export interface ResumeVersion {
   user_id: string
   version_name: string
   content: string | null
+  file_path: string | null
+  file_name: string | null
   created_at: string
 }
 

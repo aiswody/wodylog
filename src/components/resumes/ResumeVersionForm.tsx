@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
+import { RESUME_FILE_ACCEPT } from '../../lib/constants'
 import type { ResumeVersion } from '../../types/database'
 import { ErrorBanner } from '../common/ErrorBanner'
 
 export interface ResumeVersionFormValues {
   version_name: string
   content: string
+  file: File | null
 }
 
 interface ResumeVersionFormProps {
@@ -19,6 +21,7 @@ export function ResumeVersionForm({ initial, submitLabel, onSubmit, onCancel }: 
   const [values, setValues] = useState<ResumeVersionFormValues>({
     version_name: initial?.version_name ?? '',
     content: initial?.content ?? '',
+    file: null,
   })
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
@@ -44,7 +47,22 @@ export function ResumeVersionForm({ initial, submitLabel, onSubmit, onCancel }: 
       </label>
       <label>
         내용
-        <textarea rows={8} value={values.content} onChange={(e) => setValues((v) => ({ ...v, content: e.target.value }))} />
+        <textarea
+          rows={8}
+          value={values.content}
+          onChange={(e) => setValues((v) => ({ ...v, content: e.target.value }))}
+        />
+      </label>
+      <label>
+        파일 첨부 (PDF, Word)
+        <input
+          type="file"
+          accept={RESUME_FILE_ACCEPT}
+          onChange={(e) => setValues((v) => ({ ...v, file: e.target.files?.[0] ?? null }))}
+        />
+        {initial?.file_name && !values.file && (
+          <span className="resume-existing-file">현재 첨부: {initial.file_name}</span>
+        )}
       </label>
 
       {error && <ErrorBanner message={error} />}
