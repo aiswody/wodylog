@@ -8,7 +8,6 @@ export function useUpcomingEvents(rangeStart: string, rangeEnd: string) {
       supabase
         .from('events')
         .select('*, application:applications!inner(id, company_name, platform, status)')
-        .eq('is_completed', false)
         .gte('event_date', rangeStart)
         .lte('event_date', rangeEnd)
         .order('event_date', { ascending: true }),

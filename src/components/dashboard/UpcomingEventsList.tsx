@@ -4,14 +4,21 @@ import type { EventWithApplication } from '../../types/domain'
 
 interface UpcomingEventsListProps {
   events: EventWithApplication[]
+  emptyText?: string
   onToggleComplete: (event: EventWithApplication) => void
   onEdit: (event: EventWithApplication) => void
   onDelete: (event: EventWithApplication) => void
 }
 
-export function UpcomingEventsList({ events, onToggleComplete, onEdit, onDelete }: UpcomingEventsListProps) {
+export function UpcomingEventsList({
+  events,
+  emptyText = '이번 주(오늘부터 7일) 안에 예정된 일정이 없어요.',
+  onToggleComplete,
+  onEdit,
+  onDelete,
+}: UpcomingEventsListProps) {
   if (events.length === 0) {
-    return <p className="empty-state">이번 주(오늘부터 7일) 안에 예정된 일정이 없어요.</p>
+    return <p className="empty-state">{emptyText}</p>
   }
 
   return (

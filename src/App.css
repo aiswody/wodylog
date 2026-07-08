@@ -372,6 +372,12 @@
   font-family: inherit;
 }
 
+.event-form-checkbox {
+  flex-direction: row !important;
+  align-items: center;
+  gap: 8px !important;
+}
+
 .form-actions {
   display: flex;
   justify-content: flex-end;

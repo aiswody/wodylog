@@ -10,6 +10,7 @@ export interface EventFormValues {
   event_date: string
   location: string
   memo: string
+  is_completed: boolean
 }
 
 interface EventFormModalProps {
@@ -31,6 +32,7 @@ export function EventFormModal({ initial, onClose, onSubmit }: EventFormModalPro
     event_date: toDatetimeLocal(initial?.event_date),
     location: initial?.location ?? '',
     memo: initial?.memo ?? '',
+    is_completed: initial?.is_completed ?? false,
   })
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
@@ -83,6 +85,17 @@ export function EventFormModal({ initial, onClose, onSubmit }: EventFormModalPro
             onChange={(e) => setValues((v) => ({ ...v, memo: e.target.value }))}
           />
         </label>
+
+        {initial && (
+          <label className="event-form-checkbox">
+            <input
+              type="checkbox"
+              checked={values.is_completed}
+              onChange={(e) => setValues((v) => ({ ...v, is_completed: e.target.checked }))}
+            />
+            완료한 일정으로 표시
+          </label>
+        )}
 
         {error && <ErrorBanner message={error} />}
 

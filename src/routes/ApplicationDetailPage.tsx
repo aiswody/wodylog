@@ -47,9 +47,15 @@ export function ApplicationDetailPage() {
         event_date: isoDate,
         location: values.location || null,
         memo: values.memo || null,
+        is_completed: values.is_completed,
       })
     }
-    return createEvent({ ...values, event_date: isoDate })
+    return createEvent({
+      event_type: values.event_type,
+      event_date: isoDate,
+      location: values.location,
+      memo: values.memo,
+    })
   }
 
   const unlinkedVersions = allVersions.filter((v) => !linkedVersions.some((lv) => lv.id === v.id))

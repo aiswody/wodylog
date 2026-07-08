@@ -54,6 +54,7 @@ export function CalendarPage() {
         event_date: isoDate,
         location: values.location || null,
         memo: values.memo || null,
+        is_completed: values.is_completed,
       })
       .eq('id', editingEvent.id)
     if (error) return { error: error.message }

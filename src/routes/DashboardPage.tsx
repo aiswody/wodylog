@@ -23,6 +23,9 @@ export function DashboardPage() {
   const { events, loading: eventsLoading, error: eventsError, refetch } = useUpcomingEvents(rangeStart, rangeEnd)
   const [editingEvent, setEditingEvent] = useState<EventWithApplication | null>(null)
 
+  const pendingEvents = useMemo(() => events.filter((e) => !e.is_completed), [events])
+  const completedEvents = useMemo(() => events.filter((e) => e.is_completed), [events])
+
   async function toggleComplete(event: EventWithApplication) {
     await supabase.from('events').update({ is_completed: !event.is_completed }).eq('id', event.id)
     await refetch()
@@ -44,6 +47,7 @@ export function DashboardPage() {
         event_date: isoDate,
         location: values.location || null,
         memo: values.memo || null,
+        is_completed: values.is_completed,
       })
       .eq('id', editingEvent.id)
     if (error) return { error: error.message }
@@ -64,7 +68,18 @@ export function DashboardPage() {
         <LoadingSpinner />
       ) : (
         <UpcomingEventsList
-          events={events}
+          events={pendingEvents}
+          onToggleComplete={(event) => void toggleComplete(event)}
+          onEdit={setEditingEvent}
+          onDelete={(event) => void deleteEvent(event)}
+        />
+      )}
+
+      <h2 className="dashboard-section-title">완료한 일정</h2>
+      {!eventsLoading && (
+        <UpcomingEventsList
+          events={completedEvents}
+          emptyText="이번 주 안에 완료 처리한 일정이 없어요."
           onToggleComplete={(event) => void toggleComplete(event)}
           onEdit={setEditingEvent}
           onDelete={(event) => void deleteEvent(event)}
