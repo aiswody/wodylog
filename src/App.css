@@ -438,6 +438,38 @@
   margin-bottom: 0;
 }
 
+.google-sync-panel .page-header {
+  margin-bottom: 0;
+  align-items: flex-start;
+}
+
+.google-sync-description {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.google-sync-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.google-sync-actions button {
+  padding: 7px 14px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-raised);
+  color: var(--text);
+  font-size: 12.5px;
+  box-shadow: var(--shadow-sm);
+}
+
+.google-sync-actions button:hover {
+  background: var(--bg-alt);
+  color: var(--text-h);
+}
+
 .application-memo {
   white-space: pre-wrap;
   color: var(--text-h);

@@ -12,9 +12,11 @@ import {
 } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import { useCalendarEvents } from '../hooks/useCalendarEvents'
+import { useGoogleCalendarSync } from '../context/GoogleCalendarSyncContext'
 import { CalendarViewToggle } from '../components/calendar/CalendarViewToggle'
 import { CalendarMonthView } from '../components/calendar/CalendarMonthView'
 import { CalendarWeekView } from '../components/calendar/CalendarWeekView'
+import { GoogleCalendarSyncPanel } from '../components/calendar/GoogleCalendarSyncPanel'
 import { EventFormModal } from '../components/events/EventFormModal'
 import type { EventFormValues } from '../components/events/EventFormModal'
 import { LoadingSpinner } from '../components/common/LoadingSpinner'
@@ -33,6 +35,7 @@ export function CalendarPage() {
 
   const { events, loading, error, refetch } = useCalendarEvents(rangeStart.toISOString(), rangeEnd.toISOString())
   const eventsByDate = useMemo(() => groupEventsByDate(events), [events])
+  const { syncEvent } = useGoogleCalendarSync()
 
   function goPrev() {
     setAnchorDate((d) => (viewMode === 'month' ? subMonths(d, 1) : subWeeks(d, 1)))
@@ -47,18 +50,17 @@ export function CalendarPage() {
   async function handleEventSubmit(values: EventFormValues) {
     if (!editingEvent) return { error: null }
     const isoDate = new Date(values.event_date).toISOString()
-    const { error } = await supabase
-      .from('events')
-      .update({
-        event_type: values.event_type,
-        event_date: isoDate,
-        location: values.location || null,
-        memo: values.memo || null,
-        is_completed: values.is_completed,
-      })
-      .eq('id', editingEvent.id)
+    const patch = {
+      event_type: values.event_type,
+      event_date: isoDate,
+      location: values.location || null,
+      memo: values.memo || null,
+      is_completed: values.is_completed,
+    }
+    const { error } = await supabase.from('events').update(patch).eq('id', editingEvent.id)
     if (error) return { error: error.message }
     await refetch()
+    syncEvent('update', { ...editingEvent, ...patch }, editingEvent.application.company_name)
     return { error: null }
   }
 
@@ -73,6 +75,8 @@ export function CalendarPage() {
         <h1>캘린더</h1>
         <CalendarViewToggle viewMode={viewMode} onChange={setViewMode} />
       </div>
+
+      <GoogleCalendarSyncPanel />
 
       <div className="calendar-nav">
         <button type="button" onClick={goPrev}>

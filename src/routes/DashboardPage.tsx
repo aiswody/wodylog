@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { addDays, endOfDay, startOfDay } from 'date-fns'
 import { useApplications } from '../hooks/useApplications'
 import { useUpcomingEvents } from '../hooks/useUpcomingEvents'
+import { useGoogleCalendarSync } from '../context/GoogleCalendarSyncContext'
 import { StatusSummaryCards } from '../components/dashboard/StatusSummaryCards'
 import { UpcomingEventsList } from '../components/dashboard/UpcomingEventsList'
 import { EventFormModal } from '../components/events/EventFormModal'
@@ -21,6 +22,7 @@ export function DashboardPage() {
   }, [])
 
   const { events, loading: eventsLoading, error: eventsError, refetch } = useUpcomingEvents(rangeStart, rangeEnd)
+  const { syncEvent } = useGoogleCalendarSync()
   const [editingEvent, setEditingEvent] = useState<EventWithApplication | null>(null)
 
   const pendingEvents = useMemo(() => events.filter((e) => !e.is_completed), [events])
@@ -29,29 +31,30 @@ export function DashboardPage() {
   async function toggleComplete(event: EventWithApplication) {
     await supabase.from('events').update({ is_completed: !event.is_completed }).eq('id', event.id)
     await refetch()
+    syncEvent('update', { ...event, is_completed: !event.is_completed }, event.application.company_name)
   }
 
   async function deleteEvent(event: EventWithApplication) {
     if (!confirm('이 일정을 삭제할까요?')) return
     await supabase.from('events').delete().eq('id', event.id)
     await refetch()
+    syncEvent('delete', event, event.application.company_name)
   }
 
   async function handleEventSubmit(values: EventFormValues) {
     if (!editingEvent) return { error: null }
     const isoDate = new Date(values.event_date).toISOString()
-    const { error } = await supabase
-      .from('events')
-      .update({
-        event_type: values.event_type,
-        event_date: isoDate,
-        location: values.location || null,
-        memo: values.memo || null,
-        is_completed: values.is_completed,
-      })
-      .eq('id', editingEvent.id)
+    const patch = {
+      event_type: values.event_type,
+      event_date: isoDate,
+      location: values.location || null,
+      memo: values.memo || null,
+      is_completed: values.is_completed,
+    }
+    const { error } = await supabase.from('events').update(patch).eq('id', editingEvent.id)
     if (error) return { error: error.message }
     await refetch()
+    syncEvent('update', { ...editingEvent, ...patch }, editingEvent.application.company_name)
     return { error: null }
   }
 

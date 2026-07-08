@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { useAuth } from '../context/AuthContext'
+import { useGoogleCalendarSync } from '../context/GoogleCalendarSyncContext'
 import type { Application } from '../types/database'
 import type { ApplicationFormValues } from '../components/applications/ApplicationForm'
 
 export function useApplications() {
   const { user } = useAuth()
+  const { syncDeleteMany } = useGoogleCalendarSync()
   const [applications, setApplications] = useState<Application[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -55,9 +57,11 @@ export function useApplications() {
   }
 
   async function deleteApplication(id: string) {
+    const { data: eventsToClean } = await supabase.from('events').select('google_event_id').eq('application_id', id)
     const { error } = await supabase.from('applications').delete().eq('id', id)
     if (error) return { error: error.message }
     setApplications((prev) => prev.filter((a) => a.id !== id))
+    if (eventsToClean) syncDeleteMany(eventsToClean)
     return { error: null }
   }
 

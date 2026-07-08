@@ -18,6 +18,7 @@ export interface Event {
   location: string | null
   is_completed: boolean
   memo: string | null
+  google_event_id: string | null
   created_at: string
 }
 
@@ -34,4 +35,12 @@ export interface ResumeVersion {
 export interface ApplicationResume {
   application_id: string
   resume_version_id: string
+}
+
+export interface GoogleCalendarConnection {
+  user_id: string
+  calendar_id: string
+  active: boolean
+  connected_at: string
+  disconnected_at: string | null
 }

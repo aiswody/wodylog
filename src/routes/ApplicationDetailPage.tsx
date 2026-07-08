@@ -27,7 +27,7 @@ export function ApplicationDetailPage() {
     createEvent,
     updateEvent,
     deleteEvent,
-  } = useEvents(applicationId)
+  } = useEvents(applicationId, application?.company_name ?? '')
 
   const { linkedVersions, linkVersion, unlinkVersion } = useApplicationResumes(applicationId)
   const { versions: allVersions } = useResumeVersions()
