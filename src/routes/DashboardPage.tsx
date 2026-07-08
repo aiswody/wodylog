@@ -5,6 +5,7 @@ import { useUpcomingEvents } from '../hooks/useUpcomingEvents'
 import { useGoogleCalendarSync } from '../context/GoogleCalendarSyncContext'
 import { StatusSummaryCards } from '../components/dashboard/StatusSummaryCards'
 import { UpcomingEventsList } from '../components/dashboard/UpcomingEventsList'
+import { PushReminderPanel } from '../components/dashboard/PushReminderPanel'
 import { EventFormModal } from '../components/events/EventFormModal'
 import type { EventFormValues } from '../components/events/EventFormModal'
 import { LoadingSpinner } from '../components/common/LoadingSpinner'
@@ -61,6 +62,8 @@ export function DashboardPage() {
   return (
     <div>
       <h1>대시보드</h1>
+
+      <PushReminderPanel />
 
       {appsError && <ErrorBanner message={appsError} />}
       {appsLoading ? <LoadingSpinner /> : <StatusSummaryCards applications={applications} />}

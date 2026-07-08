@@ -6,6 +6,7 @@ const NAV_ITEMS = [
   { to: '/calendar', label: '캘린더' },
   { to: '/applications', label: '지원 목록' },
   { to: '/resumes', label: '자소서 버전' },
+  { to: '/templates', label: '템플릿' },
 ]
 
 export function AppLayout() {

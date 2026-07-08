@@ -7,6 +7,7 @@ import { useResumeVersions } from '../hooks/useResumeVersions'
 import { EventTimeline } from '../components/events/EventTimeline'
 import { EventFormModal } from '../components/events/EventFormModal'
 import type { EventFormValues } from '../components/events/EventFormModal'
+import { TemplateApplyModal } from '../components/events/TemplateApplyModal'
 import { ApplicationForm } from '../components/applications/ApplicationForm'
 import { ResumeUsageList } from '../components/resumes/ResumeUsageList'
 import { Modal } from '../components/common/Modal'
@@ -34,6 +35,7 @@ export function ApplicationDetailPage() {
 
   const [showEditApplication, setShowEditApplication] = useState(false)
   const [eventModalTarget, setEventModalTarget] = useState<Event | 'new' | null>(null)
+  const [showTemplateApply, setShowTemplateApply] = useState(false)
   const [selectedVersionId, setSelectedVersionId] = useState('')
 
   if (appLoading) return <LoadingSpinner />
@@ -56,6 +58,13 @@ export function ApplicationDetailPage() {
       location: values.location,
       memo: values.memo,
     })
+  }
+
+  async function handleTemplateApply(rows: { event_type: string; event_date: string }[]) {
+    for (let i = 0; i < rows.length; i++) {
+      await createEvent({ event_type: rows[i].event_type, event_date: rows[i].event_date, location: '', memo: '' })
+      if (i < rows.length - 1) await new Promise((resolve) => setTimeout(resolve, 150))
+    }
   }
 
   const unlinkedVersions = allVersions.filter((v) => !linkedVersions.some((lv) => lv.id === v.id))
@@ -85,9 +94,14 @@ export function ApplicationDetailPage() {
       <section className="detail-section">
         <div className="page-header">
           <h2>일정</h2>
-          <button type="button" onClick={() => setEventModalTarget('new')}>
-            + 일정 추가
-          </button>
+          <div className="template-card-actions">
+            <button type="button" onClick={() => setShowTemplateApply(true)}>
+              템플릿으로 추가
+            </button>
+            <button type="button" onClick={() => setEventModalTarget('new')}>
+              + 일정 추가
+            </button>
+          </div>
         </div>
 
         {eventsError && <ErrorBanner message={eventsError} />}
@@ -110,6 +124,10 @@ export function ApplicationDetailPage() {
             onClose={() => setEventModalTarget(null)}
             onSubmit={handleEventSubmit}
           />
+        )}
+
+        {showTemplateApply && (
+          <TemplateApplyModal onClose={() => setShowTemplateApply(false)} onApply={handleTemplateApply} />
         )}
       </section>
 

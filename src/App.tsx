@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import './App.css'
 import { AuthProvider } from './context/AuthContext'
 import { GoogleCalendarSyncProvider } from './context/GoogleCalendarSyncContext'
+import { PushNotificationProvider } from './context/PushNotificationContext'
 import { ProtectedRoute } from './components/layout/ProtectedRoute'
 import { AppLayout } from './components/layout/AppLayout'
 import { LoginPage } from './routes/LoginPage'
@@ -10,28 +11,32 @@ import { CalendarPage } from './routes/CalendarPage'
 import { ApplicationsPage } from './routes/ApplicationsPage'
 import { ApplicationDetailPage } from './routes/ApplicationDetailPage'
 import { ResumeVersionsPage } from './routes/ResumeVersionsPage'
+import { EventTemplatesPage } from './routes/EventTemplatesPage'
 
 function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
         <GoogleCalendarSyncProvider>
-          <Routes>
-            <Route path="/login" element={<LoginPage />} />
-            <Route
-              element={
-                <ProtectedRoute>
-                  <AppLayout />
-                </ProtectedRoute>
-              }
-            >
-              <Route path="/" element={<DashboardPage />} />
-              <Route path="/calendar" element={<CalendarPage />} />
-              <Route path="/applications" element={<ApplicationsPage />} />
-              <Route path="/applications/:id" element={<ApplicationDetailPage />} />
-              <Route path="/resumes" element={<ResumeVersionsPage />} />
-            </Route>
-          </Routes>
+          <PushNotificationProvider>
+            <Routes>
+              <Route path="/login" element={<LoginPage />} />
+              <Route
+                element={
+                  <ProtectedRoute>
+                    <AppLayout />
+                  </ProtectedRoute>
+                }
+              >
+                <Route path="/" element={<DashboardPage />} />
+                <Route path="/calendar" element={<CalendarPage />} />
+                <Route path="/applications" element={<ApplicationsPage />} />
+                <Route path="/applications/:id" element={<ApplicationDetailPage />} />
+                <Route path="/resumes" element={<ResumeVersionsPage />} />
+                <Route path="/templates" element={<EventTemplatesPage />} />
+              </Route>
+            </Routes>
+          </PushNotificationProvider>
         </GoogleCalendarSyncProvider>
       </AuthProvider>
     </BrowserRouter>
