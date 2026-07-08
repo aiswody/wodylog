@@ -19,6 +19,12 @@ export const EVENT_TYPE_OPTIONS = [
   '기타',
 ] as const
 
+// event types where a physical/video location is actually meaningful.
+// 서류마감/코딩테스트/결과발표 are online-only in practice, so the
+// location field only shows up for interviews (and 기타, since it's
+// ambiguous by design).
+export const EVENT_TYPES_WITH_LOCATION: readonly string[] = ['1차면접', '2차면접', '최종면접', '기타']
+
 // same-date events highlight the day; events landing within this many
 // hours of each other get a tighter "urgent" badge.
 export const COLLISION_URGENT_HOURS = 3

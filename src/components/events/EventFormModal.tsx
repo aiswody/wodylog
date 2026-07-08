@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
-import { EVENT_TYPE_OPTIONS } from '../../lib/constants'
+import { EVENT_TYPE_OPTIONS, EVENT_TYPES_WITH_LOCATION } from '../../lib/constants'
 import type { Event } from '../../types/database'
 import { Modal } from '../common/Modal'
 import { ErrorBanner } from '../common/ErrorBanner'
@@ -36,6 +36,15 @@ export function EventFormModal({ initial, onClose, onSubmit }: EventFormModalPro
   })
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
+  const showLocation = EVENT_TYPES_WITH_LOCATION.includes(values.event_type)
+
+  function handleEventTypeChange(newType: string) {
+    setValues((v) => ({
+      ...v,
+      event_type: newType,
+      location: EVENT_TYPES_WITH_LOCATION.includes(newType) ? v.location : '',
+    }))
+  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
@@ -53,10 +62,7 @@ export function EventFormModal({ initial, onClose, onSubmit }: EventFormModalPro
       <form onSubmit={(e) => void handleSubmit(e)} className="event-form">
         <label>
           종류
-          <select
-            value={values.event_type}
-            onChange={(e) => setValues((v) => ({ ...v, event_type: e.target.value }))}
-          >
+          <select value={values.event_type} onChange={(e) => handleEventTypeChange(e.target.value)}>
             {EVENT_TYPE_OPTIONS.map((t) => (
               <option key={t} value={t}>
                 {t}
@@ -73,10 +79,15 @@ export function EventFormModal({ initial, onClose, onSubmit }: EventFormModalPro
             onChange={(e) => setValues((v) => ({ ...v, event_date: e.target.value }))}
           />
         </label>
-        <label>
-          장소
-          <input value={values.location} onChange={(e) => setValues((v) => ({ ...v, location: e.target.value }))} />
-        </label>
+        {showLocation && (
+          <label>
+            장소
+            <input
+              value={values.location}
+              onChange={(e) => setValues((v) => ({ ...v, location: e.target.value }))}
+            />
+          </label>
+        )}
         <label>
           메모
           <textarea

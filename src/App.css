@@ -441,13 +441,8 @@
 .application-memo {
   white-space: pre-wrap;
   color: var(--text-h);
-  background: var(--bg-raised);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 14px 16px;
-  margin: 8px 0 28px;
+  margin: 0;
   font-size: 14px;
-  box-shadow: var(--shadow-sm);
 }
 
 .dday-pill {

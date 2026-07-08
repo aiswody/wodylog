@@ -75,7 +75,12 @@ export function ApplicationDetailPage() {
         </button>
       </div>
 
-      {application.memo && <p className="application-memo">{application.memo}</p>}
+      {application.memo && (
+        <section className="detail-section">
+          <h2>메모</h2>
+          <p className="application-memo">{application.memo}</p>
+        </section>
+      )}
 
       <section className="detail-section">
         <div className="page-header">
