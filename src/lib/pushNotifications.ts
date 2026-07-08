@@ -12,7 +12,8 @@ function urlBase64ToUint8Array(base64String: string) {
 }
 
 async function registerServiceWorker() {
-  return navigator.serviceWorker.register('/sw.js')
+  await navigator.serviceWorker.register('/sw.js')
+  return navigator.serviceWorker.ready
 }
 
 export async function getCurrentSubscription() {
