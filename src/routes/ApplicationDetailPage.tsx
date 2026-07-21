@@ -8,6 +8,7 @@ import { EventTimeline } from '../components/events/EventTimeline'
 import { EventFormModal } from '../components/events/EventFormModal'
 import type { EventFormValues } from '../components/events/EventFormModal'
 import { TemplateApplyModal } from '../components/events/TemplateApplyModal'
+import { nextStatusForEvent } from '../lib/statusProgression'
 import { ApplicationForm } from '../components/applications/ApplicationForm'
 import { ResumeUsageList } from '../components/resumes/ResumeUsageList'
 import { Modal } from '../components/common/Modal'
@@ -41,6 +42,16 @@ export function ApplicationDetailPage() {
   if (appLoading) return <LoadingSpinner />
   if (!application) return <ErrorBanner message={appError ?? '지원 정보를 찾을 수 없어요.'} />
 
+  async function advanceStatusFor(eventTypes: string[]) {
+    if (!application) return
+    let status = application.status
+    for (const eventType of eventTypes) {
+      const next = nextStatusForEvent(status, eventType)
+      if (next) status = next
+    }
+    if (status !== application.status) await updateApplication({ status })
+  }
+
   async function handleEventSubmit(values: EventFormValues) {
     const isoDate = new Date(values.event_date).toISOString()
     if (eventModalTarget && eventModalTarget !== 'new') {
@@ -52,12 +63,14 @@ export function ApplicationDetailPage() {
         is_completed: values.is_completed,
       })
     }
-    return createEvent({
+    const result = await createEvent({
       event_type: values.event_type,
       event_date: isoDate,
       location: values.location,
       memo: values.memo,
     })
+    if (!result.error) await advanceStatusFor([values.event_type])
+    return result
   }
 
   async function handleTemplateApply(rows: { event_type: string; event_date: string }[]) {
@@ -65,6 +78,7 @@ export function ApplicationDetailPage() {
       await createEvent({ event_type: rows[i].event_type, event_date: rows[i].event_date, location: '', memo: '' })
       if (i < rows.length - 1) await new Promise((resolve) => setTimeout(resolve, 150))
     }
+    await advanceStatusFor(rows.map((r) => r.event_type))
   }
 
   const unlinkedVersions = allVersions.filter((v) => !linkedVersions.some((lv) => lv.id === v.id))
